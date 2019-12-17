@@ -1,0 +1,137 @@
+﻿<%@ Master Language="C#" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<script runat="server">
+
+</script>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+
+    <title>Shikma's Friends</title>
+        <link href="CSS/Basic.css" rel="stylesheet" type="text/css" />
+    <link href="CSS/class.css" rel="stylesheet" type="text/css" />
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<%
+  bool ifLog = Request.QueryString["block"] != null;
+   if (ifLog)
+   {
+       Session["id"] = null;
+   }
+       %>
+<body>
+
+ <script runat=server>
+             string GetUserImage(string idUser)
+             {
+                 string sql = "Select * from Images where UserID=" + idUser;
+                 DBHelper dbh = new DBHelper();
+                 System.Data.DataTable dt = dbh.GetData(sql);
+                 for(int k = 0; k < dt.Rows.Count; k++)
+                 {
+                     if (bool.Parse(dt.Rows[k]["IsProfile"].ToString()) == true)
+                     {
+                         return dt.Rows[k]["PicName"].ToString();
+                     }
+                 }
+                 return "noPic.png";
+             }
+         </script>
+    
+    <table align="center" cellpadding="0" cellspacing="0" style="width: 100%">
+        <tr>
+            <td>
+            <header><br /><br /><br /><a1 class="HText"> <a href=index.aspx class="HText">ShikmaFriends</a></a1><img src="http://www.shikma.org.il/GenerateImages/ShikmaLogo.gif"  height="50px" width="50px"><br /><a2 class="HText">Shikma's social network</a2></header>
+                </td>
+        </tr>
+        <tr>
+            <td class="Header">
+            <br /><center style="height: 60x;"><ul><a href=index.aspx><li>ראשי</li></a>
+                            <% if (Session["id"] == null)
+                               {%><a href=login.aspx><li>התחבר</li></a><%}
+                               else
+                               { %><a href=profile.aspx><li>פרופיל</li></a><%} %>
+                               <a href="users.aspx"><li>משתמשים</li></a></ul></center><br />
+                              <% int counter = 10;
+                                 if (Application["count"] == null)
+                                     Application["count"] = counter++;
+                                 else
+                                 {
+                                     counter = (int)Application["count"] + 1;
+                                     Application["count"] = counter;
+                                 }  %>מונה כניסות :<%=counter%>
+                                 </td>
+        </tr>
+    </table>
+    <table align="center" cellpadding="0" cellspacing="0" style="width: 1200px">
+        <tr>
+            <td rowspan="4" class="main">
+            <div class="mainDiv">
+            <br /><hr /><br /><br />
+                <asp:ContentPlaceHolder ID="body" runat="server">
+                </asp:ContentPlaceHolder><br /><br /><hr /><br />
+            </div>
+                </td>
+            <td width="250px" height="170px">
+            <br />
+                <div class="box">
+                <% if (Session["id"] == null)
+                   {
+                %>
+                <h3 align="center">:היתחברות</h3>
+           <form action="../login.aspx" method="post">
+            <p align="right" class="reg">:שם מישתמש</p><input name="userName" type="text" 
+                size="17px"/><br /><p align="right" class="reg">:סיסמה</p>
+            <input name="password" type="password" size="17px" /><br />?זכור אותי<input name="remember"
+                type="checkbox" align="right" /><br /><center>
+                    <input type="reset" value="אפס" /><input name="send" type="submit" value="התחבר" /></center></form>
+                    <%}
+                   else
+                   { 
+        string id = Session["id"].ToString();
+       string sql = "Select * from Users where UserID=" + id;
+       DBHelper dbh = new DBHelper();
+       System.Data.DataTable dt = dbh.GetData(sql);
+       string name = dt.Rows[0]["UserName"].ToString();
+       string lastName = dt.Rows[0]["UserLastName"].ToString(); %><a href="profile.aspx">
+      <b> שלום <%=name %> <%=lastName%></b>
+                <img src="uploads\<%=GetUserImage(id) %>" class="pr" width="70px" height="70px" style="padding: 10px;"></a></div>
+                      <%} %>
+                </td>
+        </tr>
+        <tr>
+            <td width="250px" height="50px"><br />
+             <a href="../pre.htm"><div class="box"><h3>?מה זה שקמה</div></h3></a>
+                </td>
+        </tr>
+        <tr>
+            <td width="250px" height="50px">
+            <br />
+            <% if (Session["id"] == null)
+               {
+                %>
+             <a href="../register.aspx"><div class="box">
+            <h3>?!? עדיין לא רשום</h3></div></a><%}
+                                                  else
+                                                  { %>
+                                                  <a href="?block=true">
+                                                  <div class="box"><b>התנתק</b></div></a>
+                                                  <%} %>
+                </td>
+        </tr>
+        <tr>
+            <td width="250px" height="100%">
+                </td>
+        </tr>
+        <tr>
+            <td><br />
+                <h2 style="color: black; text-shadow: 0 1px 2px rgba(255, 255, 255, 0.9), 0 3px 0 rgba(25, 27, 9, 0.8);"><set3d>Copyright © 2013-2014. All Rights Reserved.</set3d></h2><br /><br /></td>
+            <td width="250px"><br /><br />
+                </td>
+        </tr>
+    </table>
+
+</body>
+</html>
